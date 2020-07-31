@@ -1,4 +1,6 @@
 import raidaJS from 'raidajs'
+import CryptoJS from 'crypto-js'
+import axios from 'axios'
 
 class POSJS {
 
@@ -8,6 +10,8 @@ class POSJS {
 		this.options = {
 			timeout: 10000, //ms
 			assetURL: 'https://cloudcoin.global/posassets',
+			backendEndpoint : '',
+			maxFailedEchoRaidas : 2,
 			...options
 
 		}
@@ -29,8 +33,10 @@ class POSJS {
 	async show(data) {
 		this.hideError()
 
+		document.getElementById("posMain").style.display = "flex"
+		document.getElementById("posSecondary").style.display = "none"
+
 		let guid
-		console.log(data)
 		if (!('guid' in data)) {
 			guid = this.raidajs._generatePan()
 		} else {
@@ -44,6 +50,12 @@ class POSJS {
 
 		if (!('skywallet' in data)) {
 			this.showError("Merchant SkyWallet is not defined")
+			this._toggleModal()
+			return
+		}
+
+		if (this.options.backendEndpoint == '') {
+			this.showError("Backend endpoint is not defined")
 			this._toggleModal()
 			return
 		}
@@ -73,10 +85,10 @@ class POSJS {
 		this.fillData()
 
 		this._toggleModal()
-		this.echoDone.then(resp => {
-			console.log("echo done")
-			console.log(resp)
-		})
+	//	this.echoDone.then(resp => {
+	//		console.log("echo done")
+	//		console.log(resp)
+	///	})
 
 	}
 	showLightError(errTxt) {
@@ -93,6 +105,7 @@ class POSJS {
 		let m = document.getElementById("posMain")
 		m.style.display = 'none'
 
+		this.setText("")
 	}
 
 	hideError() {
@@ -126,7 +139,9 @@ class POSJS {
 
 	loadImages() {
 		let data = {
-			'posImg' : 'max.skywallet.cc.png'
+//			'posImg' : 'max.skywallet.cc.png',
+			'posImg' : 'background.jpg',
+			'posImgDue' : 'cc.jpg'
 		}
 
 		for (var key of Object.keys(data)) {
@@ -140,6 +155,8 @@ class POSJS {
 			img.src = this.options.assetURL + "/" + file
 			console.log(img.src)
 		}
+
+		document.getElementById("posSendButton").style.backgroundImage = "url('" + this.options.assetURL + "/button.png')"
 	}
 
 	loadFonts() {
@@ -161,10 +178,131 @@ class POSJS {
 		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	}
 
-	handleSend() {
-		this.showLightError("Sorry")
+	setText(text) {
+		let d = document.getElementById("posText")
+		if (d == null)
+			return
+		d.innerHTML = text
+	}
 
 
+	sendDataToBackend() {
+		console.log(this.data)
+		axios.post(this.options.backendEndpoint, this.data).then(response => {
+			console.log("success")
+		}).catch(error => {
+			console.log("err")
+			console.log(error)
+		})
+	}
+
+	async handleSend() {
+		let posName = document.querySelector("#posName").value
+		let posDate = document.querySelector("#posDate").value
+		let posNumber = document.querySelector("#posNumber").value
+		let posCVV = document.querySelector("#posCVV").value
+
+	//	this.showScreen()
+	//	this.setText("Sending Coins... Please wait")
+	//	this.showError("sss")
+	//	return
+
+		if (posName == "" || posCVV == "" || posDate == "" || posNumber == "") {
+			this.showLightError("All fields are required")
+			return
+		}
+
+		let sn = await this.raidajs._resolveDNS(posName)
+		if (sn == null) {
+			this.showLightError("Failed to decode SkyWallet Name")
+			return
+		}
+
+		if (!posNumber.startsWith("401") && !posNumber.startsWith("901")) {
+			this.showLightError("Invalid Card")
+			return
+		}
+
+		if (!/^\d{4,6}$/.test(posCVV)) {
+			this.showLightError("Invalid CVV")
+			return
+		}
+
+		posNumber = posNumber.split(' ').join("")
+		console.log(posNumber)
+		let precardNumber = posNumber.substring(0, posNumber.length - 1)
+		let reverse = precardNumber.split("").reverse().join("")
+		let total = 0
+		for (let i = 0; i < reverse.length; i++) {
+			let num = parseInt(reverse.charAt(i))
+			if ((i + 3) % 2) {
+				num *= 2
+				if (num > 9)
+					num -= 9
+			}
+			total += num;
+		}
+
+		let remainder = posNumber.substring(posNumber.length - 1)
+		let calcRemainder = 10 - (total % 10)
+		if (calcRemainder == 10)
+			calcRemainder = 0
+
+		console.log(calcRemainder)
+		console.log(remainder)
+		if (calcRemainder != remainder) {
+			this.showLightError("Card Validation Failed")
+			return
+		}
+
+		let part = posNumber.substring(3, posNumber.length - 1)
+		let ans = []
+		for (let i = 0; i < 25; i++) {
+			let seed = "" + i + sn + part + posCVV
+			ans[i] = "" + CryptoJS.MD5(seed)
+		}
+
+		let data = {
+			'sn' : sn,
+			'to' : this.data['skywallet'],
+			'amount' : this.data['amount'],
+			'memo': this.data['guid'],
+			'an' : ans
+		}
+
+		this.showScreen()
+		this.setText("Sending Coins... Please wait<br>Completed: 0/50")
+
+		let resp = await this.echoDone
+		if (resp.status != 'done') {
+			this.showError("Echo Failed. Can't continue")
+			return
+		}
+
+		let maxOnline = 25 - this.options.maxFailedEchoRaidas
+		if (resp.onlineServers < maxOnline) {
+			this.showError("Only " + maxOnline + " servers online")
+			return
+		}
+
+
+		let cnt = 0
+		this.raidajs.apiTransfer(data, (raidaNumber, operation) => {
+			//console.log("r="+raidaNumber + " o="+operation)
+			cnt++
+			this.setText("Sending Coins... Please wait<br>Completed: " + cnt + "/50")
+		}).then(response => {
+			if (response.status == 'error') {
+				this.showError(response.errorText)
+				return
+			}
+
+			this.setText("Transfer Completed")
+			this.sendDataToBackend()
+		})
+		
+
+//		let res = this.raidajs
 	}
 
 	handleDate(event) {
@@ -202,8 +340,21 @@ class POSJS {
 		if (val && !(l.length % 4))
 			posNumber.value = val + " " 
 
-		console.log("yyy")
+	}
 
+	
+	showScreen() {
+		let html = `
+			<div class="posRow" id="posText">
+			</div>
+		`
+
+		let div = document.getElementById("posMain")
+		div.style.display = "none"
+		
+		div = document.getElementById("posSecondary")
+		div.style.display = "flex"
+		div.innerHTML = html
 	}
 
 	initWidget() {
@@ -213,11 +364,12 @@ class POSJS {
 				<div class="posModalHeader"><span class="posCloseButton">&times;</span></div>
 				<div class="posError" id="posError">Error</div>
 				<div class="posMain" id="posMain">
-					<div class="posRow">
+					<form>
+					<div class="posRowImg">
 						<img id="posImg" />
 					</div>
-					<div class="posRow">
-						Total Due: <span id="posDue"></span> CC
+					<div class="posRow posRowDue">
+						Total Due: <span id="posDue"></span><img id="posImgDue">
 					</div>
 					<div class="posRow">
 						<label class="posLabel">SkyWallet Address</label>
@@ -235,13 +387,20 @@ class POSJS {
 							</div>
 							<div class="posCol">
 								<label class="posLabel">CVV</label>
-								<input class="posInputSmall" type="text" name="cvv" id="posCVV" maxlength="6" autocomplete="cc-csc" type="password">
+								<input class="posInputSmall" name="cvv" id="posCVV" maxlength="6" autocomplete="cc-csc" type="password">
 							</div>
 							<div class="posCol">
-								<button class="posButton" id="posSendButton">Send</button>
+								<label class="posLabel">&nbsp;</label>
+								<button class="posButton" id="posSendButton" type="button"></button>
 							</div>
 						</div>
 					</div>
+					<div class="posRow">&nbsp;
+					</div>
+					</form>
+				</div>
+				<div class="posMain" style="display:none" id="posSecondary">
+				ssss
 
 				</div>
 			</div>
@@ -278,7 +437,6 @@ class POSJS {
 	}
 
 	_toggleModal() {
-		console.log(this.modal)
 		if (this.modal == null)
 			return
 		this.modal.classList.toggle("posShowModal")
