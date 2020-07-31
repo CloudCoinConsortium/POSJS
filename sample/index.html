@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <script src="https://e12.miroch.ru/posjs.min.js" type="text/javascript"></script>
+                <script type="text/javascript">
+                        var pos = new POSJS({'timeout':'5000', 'assetURL' : 'https://e12.miroch.ru', 'backendEndpoint': 'http:/localhost/sample_backend.php'})
+                        var data = {
+                                'skywallet' : 'ax2.skywallet.cc',
+                                'amount' : 100,
+                                'guid' : '6de9439834c9147569741d3c9c9fc011',
+                                'merchantData' : 'key0=value0;key1=value1;key2=value2'
+                        }
+                </script>
+        </head>
+        <body>
+                <div><button onclick="pos.show(data)">PAY WITH CLOUDCOIN</button></div>
+        </body>
+</html>
