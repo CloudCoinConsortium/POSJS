@@ -5,8 +5,6 @@ import axios from 'axios'
 class POSJS {
 
 	constructor(options) {
-		console.log(options)
-
 		this.options = {
 			timeout: 10000, //ms
 			assetURL: 'https://cloudcoin.global/posassets',
@@ -19,10 +17,7 @@ class POSJS {
 		this.echoDone = new Promise(resolve => {
 			this.raidajs = new RaidaJS({'timeout' : this.options.timeout})
 			this.raidajs.apiEcho().then((resp) => {
-				console.log("done")
-				console.log(resp)
 				resolve(resp)
-
 			})
 		})
 
@@ -72,6 +67,9 @@ class POSJS {
 			this._toggleModal()
 			return
 		}
+
+		if ('merchantData' in data)
+			data.merchantData = encodeURIComponent(data.merchantData)
 
 		let sn = await this.raidajs._resolveDNS(data.skywallet)
 		if (sn == null) {
@@ -145,7 +143,6 @@ class POSJS {
 		}
 
 		for (var key of Object.keys(data)) {
-			console.log(key)
 			let file = data[key]
 			let node = document.getElementById(key)
 			let img = new Image()
@@ -153,7 +150,6 @@ class POSJS {
 				node.src = this.src
 			}
 			img.src = this.options.assetURL + "/" + file
-			console.log(img.src)
 		}
 
 		document.getElementById("posSendButton").style.backgroundImage = "url('" + this.options.assetURL + "/button.png')"
@@ -187,13 +183,18 @@ class POSJS {
 
 
 	sendDataToBackend() {
-		console.log(this.data)
+		let str = Object.keys(this.data).map(key => key + "=" + this.data[key]).join("&")
+		let redirectURL = this.options.backendEndpoint + "?" + str
+
+		document.location = redirectURL
+		/*
 		axios.post(this.options.backendEndpoint, this.data).then(response => {
 			console.log("success")
 		}).catch(error => {
 			console.log("err")
 			console.log(error)
 		})
+		*/
 	}
 
 	async handleSend() {
@@ -206,7 +207,6 @@ class POSJS {
 	//	this.setText("Sending Coins... Please wait")
 	//	this.showError("sss")
 	//	return
-
 		if (posName == "" || posCVV == "" || posDate == "" || posNumber == "") {
 			this.showLightError("All fields are required")
 			return
@@ -229,7 +229,6 @@ class POSJS {
 		}
 
 		posNumber = posNumber.split(' ').join("")
-		console.log(posNumber)
 		let precardNumber = posNumber.substring(0, posNumber.length - 1)
 		let reverse = precardNumber.split("").reverse().join("")
 		let total = 0
@@ -248,8 +247,6 @@ class POSJS {
 		if (calcRemainder == 10)
 			calcRemainder = 0
 
-		console.log(calcRemainder)
-		console.log(remainder)
 		if (calcRemainder != remainder) {
 			this.showLightError("Card Validation Failed")
 			return
