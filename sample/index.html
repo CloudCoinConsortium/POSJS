@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
         <head>
-                <script src="https://e12.miroch.ru/posjs.min.js" type="text/javascript"></script>
+                <script src="posjs.min.js" type="text/javascript"></script>
                 <script type="text/javascript">
                         var pos = new POSJS({'timeout':'5000', 'assetURL' : 'https://e12.miroch.ru', 'backendEndpoint': 'http:/localhost/sample_backend.php'})
                         var data = {
@@ -13,6 +13,8 @@
                 </script>
         </head>
         <body>
-                <div><button onclick="pos.show(data)">PAY WITH CLOUDCOIN</button></div>
+                <div>
+				<img id="cc" onclick="pos.show(data)" src="pay_with_cloudcoin.png" onmouseover="cc.src='hover.png'" onmouseout="cc.src='pay_with_cloudcoin.png'">
+				</div>
         </body>
 </html>
