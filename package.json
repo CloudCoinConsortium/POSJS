@@ -34,7 +34,8 @@
     "kind-of": "^6.0.3",
     "promise.allsettled": "^1.0.2",
     "qs": "^6.9.1",
-    "raidajs": "^0.3.10"
+    "raidajs": "^0.3.10",
+    "serialize-javascript": "^4.0.0"
   },
   "homepage": "https://github.com/CloudCoinConsortium/posjs#readme",
   "devDependencies": {
