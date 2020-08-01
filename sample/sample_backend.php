@@ -13,6 +13,9 @@
 	$merchantData = $_GET['merchantData'];
 	//Validate inputs (see helper functions below)
 	
+	echo "<h2>GET Variables Sent</h2>skywallet : $received_from<br>amount : $amount_due<br>guid : $receipt_guid<br>merchantData : $merchantData<br>";
+	
+	
 /* 2. Check that this order has not been processed before */
 	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $$receipt_guid
 			$past_order_count = 0;
