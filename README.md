@@ -46,7 +46,7 @@ Another Example:
         </head>
         <body>
                 <div>
-			<img onclick='pos.show(get_parameters)' src='https://cloudcoin.global/assets.paywithcc.png' width='100'>
+			<img onclick='pos.show(get_parameters)' src='https://cloudcoin.global/assets.paywithcc.png' width='100' alt='Pay with Cloud Coin'>
 		</div>
         </body>
 </html>
