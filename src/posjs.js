@@ -7,9 +7,10 @@ class POSJS {
 	constructor(options) {
 		this.options = {
 			timeout: 10000, //ms
-			assetURL: 'https://cloudcoin.global/posassets',
-			backendEndpoint : '',
+			assetURL: 'https://cloudcoin.global/assets',
+			action : '',
 			maxFailedEchoRaidas : 2,
+			merchant_skywallet: '',
 			...options
 
 		}
@@ -31,26 +32,24 @@ class POSJS {
 		document.getElementById("posMain").style.display = "flex"
 		document.getElementById("posSecondary").style.display = "none"
 
-		let guid
 		if (!('guid' in data)) {
-			guid = this.raidajs._generatePan()
+			data.guid = this.raidajs._generatePan()
 		} else {
-			guid = data.guid
-			if (!/^([A-Fa-f0-9]{32})$/.test(guid)) {
+			if (!/^([A-Fa-f0-9]{32})$/.test(data.guid)) {
 				this.showError("Invalid GUID format")
 				this._toggleModal()
 				return
 			}
 		}
 
-		if (!('skywallet' in data)) {
+		if (this.options.merchant_skywallet == '') {
 			this.showError("Merchant SkyWallet is not defined")
 			this._toggleModal()
 			return
 		}
 
-		if (this.options.backendEndpoint == '') {
-			this.showError("Backend endpoint is not defined")
+		if (this.options.action == '') {
+			this.showError("Action is not defined")
 			this._toggleModal()
 			return
 		}
@@ -68,10 +67,10 @@ class POSJS {
 			return
 		}
 
-		if ('merchantData' in data)
-			data.merchantData = encodeURIComponent(data.merchantData)
+		//if ('merchantData' in data)
+		//	data.merchantData = encodeURIComponent(data.merchantData)
 
-		let sn = await this.raidajs._resolveDNS(data.skywallet)
+		let sn = await this.raidajs._resolveDNS(this.options.merchant_skywallet)
 		if (sn == null) {
 			this.showError("Failed to resolve Merchant SkyWallet")
 			this._toggleModal()
@@ -137,7 +136,6 @@ class POSJS {
 
 	loadImages() {
 		let data = {
-//			'posImg' : 'max.skywallet.cc.png',
 			'posImg' : 'background.jpg',
 			'posImgDue' : 'cc.jpg'
 		}
@@ -184,17 +182,9 @@ class POSJS {
 
 	sendDataToBackend() {
 		let str = Object.keys(this.data).map(key => key + "=" + this.data[key]).join("&")
-		let redirectURL = this.options.backendEndpoint + "?" + str
+		let redirectURL = this.options.action + "?" + str
 
 		document.location = redirectURL
-		/*
-		axios.post(this.options.backendEndpoint, this.data).then(response => {
-			console.log("success")
-		}).catch(error => {
-			console.log("err")
-			console.log(error)
-		})
-		*/
 	}
 
 	async handleSend() {
@@ -207,6 +197,9 @@ class POSJS {
 	//	this.setText("Sending Coins... Please wait")
 	//	this.showError("sss")
 	//	return
+	//
+	//
+	
 		if (posName == "" || posCVV == "" || posDate == "" || posNumber == "") {
 			this.showLightError("All fields are required")
 			return
@@ -261,7 +254,7 @@ class POSJS {
 
 		let data = {
 			'sn' : sn,
-			'to' : this.data['skywallet'],
+			'to' : this.options.merchant_skywallet,
 			'amount' : this.data['amount'],
 			'memo': this.data['guid'],
 			'an' : ans
@@ -285,8 +278,11 @@ class POSJS {
 
 		let cnt = 0
 		this.raidajs.apiTransfer(data, (raidaNumber, operation) => {
-			//console.log("r="+raidaNumber + " o="+operation)
 			cnt++
+
+			// three or two operations to complete: show, transfer and transfer_with_change (optionally)
+			if (cnt > 50)
+				return
 			this.setText("Sending Coins... Please wait<br>Completed: " + cnt + "/50")
 		}).then(response => {
 			if (response.status == 'error') {
