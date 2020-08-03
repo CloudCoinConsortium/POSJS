@@ -75,7 +75,7 @@ Example:
 ## Data structure
 ```js
 {
-'amount' : Number // Amount to send
+'amount' : Number // Amount of Cloudcoins the customer should send you. This is manditory and must be included. 
 'param1' : String // Any GET parameter that you want to create and have sent to  your action page.
 'param2' : String // You can create all the GET parameters you like. 
 ```
