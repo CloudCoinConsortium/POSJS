@@ -1,105 +1,110 @@
-<?php
-// sample_backend.php
-// Created by RAIDATech
-// Author Sean H. Worthington 7/31/2020
-// Demo to confirm that a customer has sent enough CloudCoins to your Skywallet.
-// Sample Call:
-// http://localhost/pos/action.php?amount=100&guid=fbc9d52a08bf41ffbb8361ca804ef138&merchant_skwyallet=sean.cloudcoin.global&merchantData=nothinghere
-
-/* 1. LOAD THE 'GET' VARIABLES   */
-
-	$received_from = $_GET['merchant_skywallet'];
-	$amount_due = $_GET['amount'];
-	$receipt_guid = $_GET['guid'];
-	$merchantData = $_GET['merchantData'];
-	//Validate inputs (see helper functions below)
-	
-	echo( "<h2>GET Variables Sent</h2>skywallet : $received_from<br>amount : $amount_due<br>guid : $receipt_guid<br>merchantData : $merchantData<br>");
+<!--
+	SKYWALLET MODAL Version 0.
+	This code will place a Pay with Cloudcoin button on your page.When you click this 
+	button, a modal will popup. The cusomter will enter their payment info. 
+	Then the modal will transfer funds from their account to yours. Then the customer
+	will be redirected to a URL like this:
+	https://yourdomain.com/your_action_page.php?amount=100&senders_skywallet=jd.skywalletcc&
+	guid=4aba6d7e9df04e7395bb4c941a594b70&your_parameter_1=something&your_parameter-2=something
 	
 	
-/* 2. Check that this order has not been processed before */
-	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $$receipt_guid
-			$past_order_count = 0;
-	if( $past_order_count > 0 ) {
-		echo("This order has already been processed.");
-	}
-
- 
-/* 3. Parse Merchant's data  */ 
-	
-	// Simulating that merchant data is for one product. Checking DB for price. 
-	$merchantData ="1 each product 3388773";
-	// SELECT price FROM products WHERE product_name ='$merchantData';
-	// $total_due = $row['price'];
-	$total_due = 100; 
-	
-	
-/* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
- 
-	//$command = "./raida_go receive $receipt_guid"; //This is for Linux. 
-	$command = "E:/Documents/pos/raida_go.exe receive $receipt_guid"; //This is for Windows 
-	echo "<br>The command is $command<br>";
-	$json_obj = exec($command); //Returns something like: {"amount_verified":100}
-	echo "<br>The comand returned: $json_obj<br>";
-	$arr = json_decode($json_obj, true);
-	$amount_verified = $arr["amount_verified"];
-	echo "<br>The amount verfified is $amount_verified.<br>";
-	
-
-
-/* 5. Decisions based on amount verified */
-
-	if( $amount_verified == $total_due ){
+	INSTRUCTION STEPS:
+	1. Customize the POSJS constructor. 
+		Please set the four fields to your needs. 
 		
-		echo("Thank you for your payment. Your order is being processed");
-		/* Process Payment */
-		// INSERT INTO orders ( order_id, product, amount, customer) 
-		// VALUES ( $recrupt_guid, $merchantData, $total_due, $received_from );
-		die();
-	
-	}// end if no CloudCoins were received
-
-	if( $amount_verified == 0 ){
-		// This should not happen
-		die("No CloudCoins Were Received. Please check your Skywallet's balance to see if you have funds.");
-	}// end if no CloudCoins were received
-
-	if( $amount_verified > $total_due ){
-		// The customer sent too much money. 
-		echo( "Thank you for your purchase. You sent us more CloudCoins than were owed. We have credited your account.");
-		// or
-		// echo( "Thank you for your purchase. You have sent your change to your Skywallet Account.");
-		// $command = "./raida_go send $received_from $change_due";//Linux. Different for Windows
-		// $exec($command); 
-		die();
-	}
-	
-	if( $amount_verified < $total_due ){
-	
-		echo( "$amount_due was needed but we only received $amount_verified. We have credited your account.");
-		// or
-		// echo( "$amount_due was needed but we only received $amount_verified. We have returned your payment.");
-		// $command = "./raida_go send $received_from $change_due";//Linux. Different for Windows
-		// $exec($command); 
-		die();
-	}
+		Timeout: The number of microsecond that your web page will wait as it 
+			attempts to transfer cloudcoins from the sender to the receiver. 
+			If your users have slow Internet, this should be increased. 
+			Usually, five seconds if fine. 
+			
+		action: The url that the GET variables will be sent to. 
 		
-	die();
-
-/* Helper Functions */
-
-	function isValidSkywallet( $received_from ){
-		//A skywallet address should have three parts like this: billy.mydomain.com
-		$pattern = "(?=^.{1,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)";
-		return preg_match($pattern, $received_from );
-	}//end validate skywallet address
+		merchant_skywallet: Your skywallet that you want to receive the senders funds in. 
 	
-	function isValidHexStr(string $hexStr, int $length){
-		if( strlen($hexStr) === $length && ctype_xdigit($hexStr)){ 
-			return true;
-		}else{ 
-			return false;
-		} 
-	}//end is valide hex
+	2. When the user adds something to their basket or there basket changes, call the 
+		setAmountDue() function. An alternative would be to add a line within the 
+		"openModal()" function so that the total due is set.
+		
+	3. Add any fields that you want to have sent to your action page. You must put an 
+		action page on your server. You can add GET parameters by just adding fields to 
+		the get_parameters object and giving that field a value. 
+		Like this: get_parameter.firstName = "Bob";
+	
+	4. Put any tests that you want done in the "openModal()" function. Here, you could also
+		call the setAmountDue() and setMerchantVaribles()0. 
+	
+	
+	5. After the user enters data into the Modal and clicks Pay, they will be redirected
+		to your action page along with all the GET variables. That page will then
+		check with the RAIDA to ensure that you have received the sender's funds. 
+		See our sample php page for help with this.
+		
+		Need help? Skype Sean Worthington Skype ID sean.worthington or Sean_Worthington@hotmail.com
+	-->
 
-?>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<!-- This script points to version "v0". There maybe newer versions like "v1". -->
+        <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
+		
+		<script name="Skywallet Modal">
+		
+			//Create an object to hold the GET parameters that will be sent to the action page.			
+			var get_parameters = {};
+			
+			//Optional. Helps track if the amount of cloudcoins due has been set yet befor the modal is called. 
+			var amountSet = false; 
+			
+			//Helps you track if all of your custom variables have been set before the modal is called. 
+			var merchantVariablesSet = true; 
+			
+			var pos = new POSJS({
+					'timeout':'20000', //Customize these URLs
+					'action': 'http://localhost/pos/action.php', 
+					'merchant_skywallet' : 'sean.cloudcoin.global'
+				})
+			
+			
+			/* You must set the amount parameter before opening the Modal.
+				This fucntion helps you set the amount. */
+			function setAmountDue( amount_due ){
+				get_parameters.amount = amount_due; //Adds a field called amount and gives it a value. 
+				amountSet = true;
+			}
+			
+			/* This is an optional function. Call this before you call openModal 
+				(if you have your own variables).  Or these can be created within the openModal()
+				function. Delete it if unneeded  */
+			function setMerchantVariables(){
+				//Add as many variables as you want. These are yours to customize. 
+				//All of these will become GET parameters and passed onto your 
+				// Action page. Just change the key and the value. 
+				//get_paramters.key = value;
+				get_parameters.customerID = 1554887; //Demonstrates how to add a customer_id GET parameter.  
+				get_parameters.phonenumber = '530-591-7058';//Another custom field. 
+				get_parameters.merchantData = 'SemethingSpecial';//Another custom field. 
+				merchantVariablesSet = true;
+				
+			}
+			
+			// Perform any validation that you want done before the user sends payment. 
+			function openModal(){
+				setAmountDue(100);
+				setMerchantVariables();
+				if( amountSet && merchantVariablesSet){
+					pos.show(get_parameters);// This actually opens the modal.
+				}
+			}
+		
+		</script>
+    </head>
+    <body>
+              
+			<div name="Skywallet Modal">
+				<img id="cc" onclick="openModal()" src="cc.png" 
+			onmouseover="cc.src='cc_hov.png'" onmouseout="cc.src='cc.png'" width="100">
+			</div>
+
+    </body>
+</html>
