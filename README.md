@@ -25,6 +25,52 @@ Example:
 </html>
 
 ```
+Another Example:
+
+```html
+# Point of Sale
+
+In order to use POS JS library you need to instantiate POSJS Object
+The widget is opened by the show() method of the object. You will need to provde a "get_parameters object
+that holds all the GET parameters you want sent to your action page on your server. 
+
+Example:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+        <head>
+                <script src="https://cloudcoin.global/assets/posjs.min.v0.js" type="text/javascript"></script>
+                <script type="text/javascript">
+                  
+                        var pos = new POSJS({
+				'timeout':'5000',
+				'action': 'https://yourdomain.com/your_action_page.php', 
+				'merchant_skywallet' : 'Your.skywallet.cc'
+			})
+                         var get_parameters = {}; // Create a get_parameters object to hold GET parameters for your action page.
+                         get_parameters.amount = 100;  // Mandatory GET variable specifies the amount of CloudCoins to be paid.                        
+                         get_parameters.customerID = 1554887; // Optional Merchant Variable customized by you. 
+                </script>
+        </head>
+        <body>
+                <div><button onclick="pos.show(get_parameters)">PAY WITH CLOUDCOIN</button></div>
+        </body>
+</html>
+
+```
+
+
+## POSJS configuration
+
+```js
+{
+'timeout' : Number // Timeout for calling RAIDA servers
+'action : String // URL to send results
+'merchant_skywallet' // The merchant's skywallet that will receive payments such as 'payments.domain.com'
+}
+```
+
 
 
 ## POSJS configuration
