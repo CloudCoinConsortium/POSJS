@@ -72,22 +72,10 @@ Example:
 ```
 
 
-
-## POSJS configuration
-
-```js
-{
-'timeout' : Number // Timeout for calling RAIDA servers
-'action' : String // URL to send results
-'merchant_skywallet' : String // Merchant Skywallet
-}
-```
-
-
 ## Data structure
 ```js
 {
 'amount' : Number // Amount to send
-'param1' : String // Any parameter to send
-}
+'param1' : String // Any GET parameter that you want to create and have sent to  your action page.
+'param2' : String // You can create all the GET parameters you like. 
 ```
