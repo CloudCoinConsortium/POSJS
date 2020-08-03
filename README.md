@@ -50,7 +50,7 @@ Example:
 			})
                          var get_parameters = {}; // Create a get_parameters object to hold GET parameters for your action page.
                          get_parameters.amount = 100;  // Mandatory GET variable specifies the amount of CloudCoins to be paid.                        
-                         get_parameters.customerID = 1554887; // Optional Merchant Variable customized by you. 
+                         get_parameters.customerID = '1554887'; // Optional Merchant Variable customized by you but must be a String. 
                 </script>
         </head>
         <body>
