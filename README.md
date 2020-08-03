@@ -28,15 +28,6 @@ Example:
 Another Example:
 
 ```html
-# Point of Sale
-
-In order to use POS JS library you need to instantiate POSJS Object
-The widget is opened by the show() method of the object. You will need to provde a "get_parameters object
-that holds all the GET parameters you want sent to your action page on your server. 
-
-Example:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
         <head>
