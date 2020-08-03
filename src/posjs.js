@@ -79,6 +79,7 @@ class POSJS {
 		}
 
 		data.sn = sn
+		data.merchant_skywallet = this.options.merchant_skywallet
 		this.data = data
 		this.fillData()
 
@@ -273,7 +274,7 @@ class POSJS {
 
 		let maxOnline = 25 - this.options.maxFailedEchoRaidas
 		if (resp.onlineServers < maxOnline) {
-			this.showError("Only " + maxOnline + " servers online")
+			this.showError("Only " + maxOnline + " RAIDA servers can be contacted")
 			return
 		}
 
