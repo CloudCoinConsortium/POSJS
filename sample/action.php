@@ -1,19 +1,20 @@
-<? php
+<?php
 // sample_backend.php
 // Created by RAIDATech
 // Author Sean H. Worthington 7/31/2020
 // Demo to confirm that a customer has sent enough CloudCoins to your Skywallet.
-
+// Sample Call:
+// http://localhost/pos/action.php?amount=100&guid=fbc9d52a08bf41ffbb8361ca804ef138&merchant_skwyallet=sean.cloudcoin.global&merchantData=nothinghere
 
 /* 1. LOAD THE 'GET' VARIABLES   */
 
-	$received_from = $_GET['skywallet'];
+	$received_from = $_GET['merchant_skywallet'];
 	$amount_due = $_GET['amount'];
 	$receipt_guid = $_GET['guid'];
 	$merchantData = $_GET['merchantData'];
 	//Validate inputs (see helper functions below)
 	
-	echo "<h2>GET Variables Sent</h2>skywallet : $received_from<br>amount : $amount_due<br>guid : $receipt_guid<br>merchantData : $merchantData<br>";
+	echo( "<h2>GET Variables Sent</h2>skywallet : $received_from<br>amount : $amount_due<br>guid : $receipt_guid<br>merchantData : $merchantData<br>");
 	
 	
 /* 2. Check that this order has not been processed before */
@@ -35,9 +36,15 @@
 	
 /* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
  
-	$command = "./raida_go receive $receipt_guid"; //This is for Linux. Windows uses a differn path
-	$json_obj = = exec($command); //Returns something like: {"amount_verified":100}
-	$amount_verified = $json_obj.amount_verified;
+	//$command = "./raida_go receive $receipt_guid"; //This is for Linux. 
+	$command = "E:/Documents/pos/raida_go.exe receive $receipt_guid"; //This is for Windows 
+	echo "<br>The command is $command<br>";
+	$json_obj = exec($command); //Returns something like: {"amount_verified":100}
+	echo "<br>The comand returned: $json_obj<br>";
+	$arr = json_decode($json_obj, true);
+	$amount_verified = $arr["amount_verified"];
+	echo "<br>The amount verfified is $amount_verified.<br>";
+	
 
 
 /* 5. Decisions based on amount verified */
