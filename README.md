@@ -54,7 +54,9 @@ Example:
                 </script>
         </head>
         <body>
-                <div><button onclick="pos.show(get_parameters)">PAY WITH CLOUDCOIN</button></div>
+                <div>
+			<img onclick='pos.show(get_parameters)' src='https://cloudcoin.global/assets.paywithcc.png' width='100'>
+		</div>
         </body>
 </html>
 
