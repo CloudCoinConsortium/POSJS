@@ -1,6 +1,7 @@
 import raidaJS from 'raidajs'
-import CryptoJS from 'crypto-js'
-import axios from 'axios'
+//import CryptoJS from 'crypto-js'
+//
+import md5 from 'blueimp-md5'
 
 class POSJS {
 
@@ -249,7 +250,8 @@ class POSJS {
 		let ans = []
 		for (let i = 0; i < 25; i++) {
 			let seed = "" + i + sn + part + posCVV
-			ans[i] = "" + CryptoJS.MD5(seed)
+			//ans[i] = "" + CryptoJS.MD5(seed)
+			ans[i] = md5(seed)
 		}
 
 		let data = {
