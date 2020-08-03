@@ -18,7 +18,7 @@
 	
 	
 /* 2. Check that this order has not been processed before */
-	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $$receipt_guid
+	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $receipt_guid
 			$past_order_count = 0;
 	if( $past_order_count > 0 ) {
 		echo("This order has already been processed.");
