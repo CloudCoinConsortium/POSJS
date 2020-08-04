@@ -1,4 +1,4 @@
-# Point of Sale
+# Point of Sale Java Script Library
 
 In order to use POS JS library you need to instantiate POSJS Object
 The widget is opened by the show() method of the object
@@ -9,7 +9,7 @@ Example:
 <!DOCTYPE html>
 <html lang="en">
         <head>
-                <script src="posjs.min.js" type="text/javascript"></script>
+                <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
                 <script type="text/javascript">
                         var pos = new POSJS({'timeout':'5000', 'action': 'https://e12.miroch.ru/backend.php', 'merchant_skywallet':'ax2.skywallet.cc'})
                         var data = {
@@ -31,7 +31,7 @@ Another Example:
 <!DOCTYPE html>
 <html lang="en">
         <head>
-                <script src="https://cloudcoin.global/assets/posjs.min.v0.js" type="text/javascript"></script>
+                <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
                 <script type="text/javascript">
                   
                         var pos = new POSJS({
