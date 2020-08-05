@@ -37,7 +37,7 @@
 /* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
  
 	//$command = "./raida_go receive $receipt_guid"; //This is for Linux. 
-	$command = "E:/Documents/pos/raida_go.exe receive $receipt_guid"; //This is for Windows 
+	$command = "E:/Documents/pos/raida_go.exe receive $receipt_guid $received_from"; //This is for Windows 
 	echo "<br>The command is $command<br>";
 	$json_obj = exec($command); //Returns something like: {"amount_verified":100}
 	echo "<br>The comand returned: $json_obj<br>";
