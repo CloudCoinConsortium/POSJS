@@ -133,14 +133,14 @@ More Thurow Example
 			/* This is an optional function. Call this before you call openModal 
 				(if you have your own variables).  Or these can be created within the openModal()
 				function. Delete it if unneeded  */
-			function setMerchantVariables(){
+			function setMerchantVariables( customerID, phone, other){
 				//Add as many variables as you want. These are yours to customize. 
 				//All of these will become GET parameters and passed onto your 
 				// Action page. Just change the key and the value. 
 				//get_paramters.key = value;
-				get_parameters.customerID = 1554887; //Demonstrates how to add a customer_id GET parameter.  
-				get_parameters.phonenumber = '530-591-7058';//Another custom field. 
-				get_parameters.merchantData = 'SemethingSpecial';//Another custom field. 
+				get_parameters.customerID = customerID; //Demonstrates how to add a customer_id GET parameter.  
+				get_parameters.phonenumber = phone;//Another custom field. 
+				get_parameters.merchantData = other;//Another custom field. 
 				merchantVariablesSet = true;
 				
 			}
