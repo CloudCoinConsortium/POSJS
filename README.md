@@ -11,8 +11,12 @@ Example:
         <head>
                 <script src="https://cloudcoin.global/assets/posjs.min.v003.js" ></script>
                 <script>
-                        var pos = new POSJS({'timeout':'5000', 'action': 'https://e12.miroch.ru/backend.php', 'merchant_skywallet':'ax2.skywallet.cc'})
-                        var data = {
+                        var pos = new POSJS({
+						'timeout':'5000', 
+						'action': 'https://e12.miroch.ru/backend.php', 
+						'merchant_skywallet':'ax2.skywallet.cc'
+					    })
+                        var get_parameters = {
                                 'amount' : 100,
 				'param1' : 'value1',
 				'param2' : 'vaule2'
@@ -20,7 +24,7 @@ Example:
                 </script>
         </head>
         <body>
-                <div><button onclick="pos.show(data)">PAY WITH CLOUDCOIN</button></div>
+                <div><button onclick="pos.show(get_parameters)">PAY WITH CLOUDCOIN</button></div>
         </body>
 </html>
 
