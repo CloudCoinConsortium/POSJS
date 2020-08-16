@@ -8,7 +8,7 @@
 
 /* 1. LOAD THE 'GET' VARIABLES   */
 
-	$received_from = $_GET['merchant_skywallet'];
+	$sent_to = $_GET['merchant_skywallet'];
 	$amount_due = $_GET['amount'];
 	$receipt_guid = $_GET['guid'];
 	$merchantData = $_GET['merchantData'];
@@ -19,7 +19,7 @@
 	
 /* 2. Check that this order has not been processed before */
 	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $receipt_guid
-			$past_order_count = 0;
+	$past_order_count = 0;
 	if( $past_order_count > 0 ) {
 		echo("This order has already been processed.");
 	}
