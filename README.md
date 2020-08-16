@@ -9,8 +9,8 @@ Example:
 <!DOCTYPE html>
 <html lang="en">
         <head>
-                <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
-                <script type="text/javascript">
+                <script src="https://cloudcoin.global/assets/posjs.min.v003.js" ></script>
+                <script>
                         var pos = new POSJS({'timeout':'5000', 'action': 'https://e12.miroch.ru/backend.php', 'merchant_skywallet':'ax2.skywallet.cc'})
                         var data = {
                                 'amount' : 100,
@@ -31,9 +31,9 @@ Another Example:
 <!DOCTYPE html>
 <html lang="en">
         <head>
-                <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
-                <script type="text/javascript">
-                  
+                <script src="https://cloudcoin.global/assets/posjs.min.v003.js"></script>
+               
+		<script>
                         var pos = new POSJS({
 				'timeout':'5000',
 				'action': 'https://yourdomain.com/your_action_page.php', 
@@ -103,9 +103,9 @@ More Thurow Example
 <html lang="en">
     <head>
 	<!-- This script points to version "v0". There maybe newer versions like "v1". -->
-        <script src="https://cloudcoin.global/assets/posjs.min.v003.js" type="text/javascript"></script>
+        <script src="https://cloudcoin.global/assets/posjs.min.v003.js" ></script>
 		
-		<script name="Skywallet Modal">
+	<script name="Skywallet Modal">
 		
 			//Create an object to hold the GET parameters that will be sent to the action page.			
 			var get_parameters = {};
