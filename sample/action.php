@@ -8,7 +8,7 @@
 
 /* 1. LOAD THE 'GET' VARIABLES   */
 
-	$received_from = $_GET['merchant_skywallet'];
+	$sent_to = $_GET['merchant_skywallet'];
 	$amount_due = $_GET['amount'];
 	$receipt_guid = $_GET['guid'];
 	$merchantData = $_GET['merchantData'];
@@ -18,8 +18,8 @@
 	
 	
 /* 2. Check that this order has not been processed before */
-	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $$receipt_guid
-			$past_order_count = 0;
+	// $past_order_count = SELECT COUNT(*) FROM orders WHERE order_id = $receipt_guid
+	$past_order_count = 0;
 	if( $past_order_count > 0 ) {
 		echo("This order has already been processed.");
 	}
@@ -37,12 +37,16 @@
 /* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
  
 	//$command = "./raida_go receive $receipt_guid"; //This is for Linux. 
-	$command = "E:/Documents/pos/raida_go.exe receive $receipt_guid"; //This is for Windows 
+	$command = "E:/Documents/pos/raida_go.exe view_receipt $receipt_guid $received_from"; //This is for Windows 
 	echo "<br>The command is $command<br>";
+	
 	$json_obj = exec($command); //Returns something like: {"amount_verified":100}
-	echo "<br>The comand returned: $json_obj<br>";
+	
+	echo "<br>The response of the command was: <pre>$json_obj</pre><br>";
+	
 	$arr = json_decode($json_obj, true);
 	$amount_verified = $arr["amount_verified"];
+	
 	echo "<br>The amount verfified is $amount_verified.<br>";
 	
 
