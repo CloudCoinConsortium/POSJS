@@ -209,7 +209,7 @@ class POSJS {
 
 		let sn = await this.raidajs._resolveDNS(posName)
 		if (sn == null) {
-			this.showLightError("Failed to decode SkyWallet Name")
+			this.showLightError("DNS problem. Try again later")
 			return
 		}
 
