@@ -393,7 +393,7 @@ class POSJS {
 						</div>
 					</div>
 					<div class="posRow" style="text-align:center">&nbsp;
-						Get a Skywallet <a href="https://skywallet.cc">Here</a>
+						Get a Skywallet <a href="https://www.skywallet.cc/debit_card.html">Here</a>
 					</div>
 					</form>
 				</div>
