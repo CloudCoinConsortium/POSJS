@@ -294,6 +294,7 @@ class POSJS {
 			}
 
 			this.setText("Transfer Completed")
+			this.data.customer_skywallet = posName
 			this.sendDataToBackend()
 		})
 		
@@ -391,13 +392,12 @@ class POSJS {
 							</div>
 						</div>
 					</div>
-					<div class="posRow">&nbsp;
+					<div class="posRow" style="text-align:center">&nbsp;
+						Get a Skywallet <a href="https://skywallet.cc">Here</a>
 					</div>
 					</form>
 				</div>
 				<div class="posMain" style="display:none" id="posSecondary">
-				ssss
-
 				</div>
 			</div>
 		</div>
