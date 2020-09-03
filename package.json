@@ -25,8 +25,8 @@
   },
   "dependencies": {
     "@babel/cli": "^7.7.7",
-    "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/runtime": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@babel/runtime": "^7.11.2",
     "axios": "^0.19.0",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
@@ -35,14 +35,14 @@
     "kind-of": "^6.0.3",
     "promise.allsettled": "^1.0.2",
     "qs": "^6.9.1",
-    "raidajs": "^0.3.10",
+    "raidajs": "^0.3.13",
     "serialize-javascript": "^4.0.0"
   },
   "homepage": "https://github.com/CloudCoinConsortium/posjs#readme",
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
-    "acorn": ">=6.4.1",
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
+    "acorn": "^8.0.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.1.0",
@@ -54,7 +54,7 @@
     "object-assign": "^4.1.1",
     "path": "^0.12.7",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.43.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.10"
   },
   "library": {

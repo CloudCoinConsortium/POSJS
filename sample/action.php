@@ -37,10 +37,16 @@ foreach($_GET as $key => $value){
 	$total_due = 5; 
 	
 	
-/* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
+	/* 4. Call raida_go program to see how many CloudCoins were sent to your Skywallet */
+	$path="E:/Documents/pos/raida_go.exe";
+	if (!file_exists($path))
+		die("Raida_go doesn't exist");
+
+	if (!is_executable($path))
+		die("Raida go is not executable for webserver user");
  
 	//$command = "./raida_go receive $receipt_guid"; //This is for Linux. 
-	$command = "E:/Documents/pos/raida_go.exe view_receipt $receipt $mywallet"; //This is for Windows 
+	$command = "$path view_receipt $receipt $mywallet"; //This is for Windows 
 	
 	echo "<br><b>The command:</b> $command<br>";
 	
