@@ -1,6 +1,6 @@
 {
   "name": "posjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CloudBank JavaScript Library",
   "main": "lib/posjs.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "kind-of": "^6.0.3",
     "promise.allsettled": "^1.0.2",
     "qs": "^6.9.1",
-    "raidajs": "^0.3.13",
+    "raidajs": "^0.3.14",
     "serialize-javascript": "^4.0.0"
   },
   "homepage": "https://github.com/CloudCoinConsortium/posjs#readme",
