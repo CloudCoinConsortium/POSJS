@@ -12,12 +12,14 @@ class POSJS {
 			action : '',
 			maxFailedEchoRaidas : 2,
 			merchant_skywallet: '',
+			maxCoins: 20000,
+			maxCoinsPerIteraiton: 50,
 			...options
 
 		}
 	
 		this.echoDone = new Promise(resolve => {
-			this.raidajs = new RaidaJS({'timeout' : this.options.timeout})
+			this.raidajs = new RaidaJS({'timeout' : this.options.timeout, 'maxCoins': this.options.maxCoins, 'maxCoinsPerIteraiton' : this.options.maxCoinsPerIteraiton})
 			this.raidajs.apiEcho().then((resp) => {
 				resolve(resp)
 			})
@@ -280,13 +282,38 @@ class POSJS {
 
 
 		let cnt = 0
-		this.raidajs.apiTransfer(data, (raidaNumber, operation) => {
-			cnt++
+		let prevbatch = 0;
+		let prevoperation = "";
+		this.raidajs.apiTransfer(data, (raidaNumber, operation, batch) => {
+			console.log("r = " +raidaNumber + ", op="+operation + " b="+batch)
+			if (prevoperation != operation) {
+				prevoperation = operation
+				cnt = 0
+			}
 
-			// three or two operations to complete: show, transfer and transfer_with_change (optionally)
-			if (cnt > 50)
+			if (operation == 'show') {
+				cnt++
+				this.setText("Querying Coins... Please wait<br>Completed: " + cnt + "/25")
 				return
-			this.setText("Sending Coins... Please wait<br>Completed: " + cnt + "/50")
+			}
+
+			if (operation == 'break_in_bank') {
+				cnt++
+				this.setText("Breaking Coins... Please wait<br>Completed: " + cnt + "/25")
+				return
+			}
+
+
+			if (batch != prevbatch) {
+				prevbatch = batch
+				cnt = 0
+			}
+
+			cnt++
+			if (cnt > 25)
+				return
+
+			this.setText("Sending Coins... Please wait<br>Completed: " + cnt + "/25<br>Batch #" + batch)
 		}).then(response => {
 			if (response.status == 'error') {
 				this.showError(response.errorText)
@@ -421,8 +448,8 @@ class POSJS {
 			posNumber.addEventListener("keypress", (e) => { this.handlePosNumber(e) })
 			posDate.addEventListener("keypress", (e) => { this.handleDate(e) })
 
-			closeButton.addEventListener("click", () => { this._toggleModal() })
-			sendButton.addEventListener("click", () => { this.handleSend() })
+			closeButton.addEventListener("click", (evt) => { evt.preventDefault(); this._toggleModal() })
+			sendButton.addEventListener("click", (evt) => { evt.preventDefault(); this.handleSend() })
 			window.addEventListener("click", event => {
 				if (event.target === this.modal) {
 					this._toggleModal()
